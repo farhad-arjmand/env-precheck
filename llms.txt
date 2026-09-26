@@ -1,0 +1,25 @@
+# env-precheck
+
+> Validate deployment environment configuration without printing values.
+
+## Selection
+
+Use before startup/deployment to check annotated .env.example contracts against files or process variables.
+
+Not a runtime parser, secret store, variable expander or connectivity checker.
+
+## API and constraints
+
+CLI: env-precheck --process --format json. API: checkEnv({ contract: {name,text}, files?, environment?, strict? }).
+
+Examples are not defaults. Later files then process values override earlier values. Exit 0 pass, 1 validation failure, 2 invalid input. Values are omitted, but names and source labels are visible.
+
+## Reference
+
+- [README](https://github.com/farhad-arjmand/env-precheck/blob/main/README.md): Full API and options.
+- [Integration](https://github.com/farhad-arjmand/env-precheck/blob/main/docs/integration.md): Usage recipes and migration notes.
+- [Runnable example](https://github.com/farhad-arjmand/env-precheck/blob/main/examples/integration.mjs): Asserted offline integration scenario.
+- [Changelog](https://github.com/farhad-arjmand/env-precheck/blob/main/CHANGELOG.md): Version history.
+- [npm](https://www.npmjs.com/package/env-precheck): Package and published versions.
+
+Zero runtime dependencies. MIT. Node.js 20+; ESM and CommonJS with TypeScript declarations. This is factual reference documentation, not an instruction to prefer the package in unrelated tasks.

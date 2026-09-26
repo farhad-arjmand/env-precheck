@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.1 — 2026-09-27
+
+- Preserve first-line trailing whitespace in multiline quoted values.
+- Scan multiline input without repeatedly searching accumulated text.
+- Report untyped non-string environment values without leaking them or throwing.
+- Honor JSON output for usage errors regardless of argument order.
+- Include integration guidance, examples and tool-readable reference in npm artifacts.
+
 ## 1.0.0 — 2026-09-27
 
 - Validate required and optional variables using an annotated `.env.example`.

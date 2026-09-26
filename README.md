@@ -22,6 +22,10 @@ A missing database URL. An invalid port. A feature flag set to `yes` when the ap
 
 `env-precheck` compares your environment with `.env.example`, checks optional rules in comments, and exits before the next deployment step when something is wrong. It does not load variables into your application or change your files.
 
+## Integration recipes and tool-readable reference
+
+See [integration recipes](https://github.com/farhad-arjmand/env-precheck/blob/main/docs/integration.md) for runnable patterns and selection criteria, [release notes](https://github.com/farhad-arjmand/env-precheck/blob/main/CHANGELOG.md) for changes, and [llms.txt](https://github.com/farhad-arjmand/env-precheck/blob/main/llms.txt) for a compact API index. The reference is ordinary documentation for developers and coding assistants; it does not require or guarantee automatic recommendations.
+
 ## Start in 30 seconds
 
 Install and commit a lockfile for reproducible CI:
@@ -106,21 +110,21 @@ An npm `predeploy` hook runs before your existing `npm run deploy` script. For o
 
 Place `# @env` comments **before** a key. Multiple rule lines can precede one key. Blank lines and normal comments do not detach a pending rule. Rules reset after that key. Inline comments after assignments are ordinary comments, not rules.
 
-| Rule | Meaning |
-| --- | --- |
-| `required` | Must exist and contain non-whitespace text; default |
-| `optional` | Missing or whitespace-only values are allowed; present values are validated |
-| `type=string` | Any nonempty text; default |
-| `type=integer` | Signed decimal integer within JavaScript's safe-integer range |
-| `type=number` | Finite decimal number; scientific notation allowed |
-| `type=port` | Decimal integer from 1 to 65535 |
-| `type=boolean` | Exactly `true` or `false` |
-| `type=url` | Absolute `scheme://host` URL with no whitespace |
-| `type=enum values=a,b,c` | Exact, case-sensitive choice; comma-separated, no spaces |
-| `type=json` | Valid JSON, including scalar JSON values |
-| `min=1 max=100` | Inclusive bounds for `integer`, `number` or `port` |
-| `minLength=32` | Minimum Unicode code-point count for strings |
-| `protocols=https,postgres` | Allowed lowercase URL schemes, without colons |
+| Rule                       | Meaning                                                                     |
+| -------------------------- | --------------------------------------------------------------------------- |
+| `required`                 | Must exist and contain non-whitespace text; default                         |
+| `optional`                 | Missing or whitespace-only values are allowed; present values are validated |
+| `type=string`              | Any nonempty text; default                                                  |
+| `type=integer`             | Signed decimal integer within JavaScript's safe-integer range               |
+| `type=number`              | Finite decimal number; scientific notation allowed                          |
+| `type=port`                | Decimal integer from 1 to 65535                                             |
+| `type=boolean`             | Exactly `true` or `false`                                                   |
+| `type=url`                 | Absolute `scheme://host` URL with no whitespace                             |
+| `type=enum values=a,b,c`   | Exact, case-sensitive choice; comma-separated, no spaces                    |
+| `type=json`                | Valid JSON, including scalar JSON values                                    |
+| `min=1 max=100`            | Inclusive bounds for `integer`, `number` or `port`                          |
+| `minLength=32`             | Minimum Unicode code-point count for strings                                |
+| `protocols=https,postgres` | Allowed lowercase URL schemes, without colons                               |
 
 Example:
 
@@ -151,11 +155,11 @@ env-precheck [options]
 --version         Installed version
 ```
 
-| Exit | Meaning |
-| --- | --- |
-| `0` | All checks passed |
-| `1` | Configuration values failed validation |
-| `2` | Invalid contract, malformed/unreadable input or invalid CLI usage |
+| Exit | Meaning                                                           |
+| ---- | ----------------------------------------------------------------- |
+| `0`  | All checks passed                                                 |
+| `1`  | Configuration values failed validation                            |
+| `2`  | Invalid contract, malformed/unreadable input or invalid CLI usage |
 
 For machine-readable CI output:
 
@@ -180,33 +184,31 @@ npx env-precheck --process --format json
 }
 ```
 
-`checked` is the number of contract keys evaluated, including optional keys. On invalid input it is `0`. `--strict` checks file keys only; unrelated process variables are always ignored. JSON output requires `--format json` to have been parsed before a CLI argument error occurs.
+`checked` is the number of contract keys evaluated, including optional keys. On invalid input it is `0`. `--strict` checks file keys only; unrelated process variables are always ignored. `--format json` also applies to argument errors regardless of flag order.
 
 ## Programmatic API
 
 ```ts
-import { checkEnv } from 'env-precheck';
-import { readFileSync } from 'node:fs';
+import { checkEnv } from "env-precheck";
+import { readFileSync } from "node:fs";
 
 const report = checkEnv({
   contract: {
-    name: '.env.example',
-    text: readFileSync('.env.example', 'utf8'),
+    name: ".env.example",
+    text: readFileSync(".env.example", "utf8"),
   },
-  files: [
-    { name: '.env', text: readFileSync('.env', 'utf8') },
-  ],
+  files: [{ name: ".env", text: readFileSync(".env", "utf8") }],
   environment: process.env, // optional; overlays declared keys only
   strict: true,
 });
 
 if (!report.ok) {
   console.error(report); // diagnostics contain no configuration values
-  process.exitCode = report.status === 'invalid' ? 2 : 1;
+  process.exitCode = report.status === "invalid" ? 2 : 1;
 }
 ```
 
-`CheckOptions`, `EnvSource`, `Report`, `Issue` and `IssueCode` are exported types. CommonJS is supported with `require('env-precheck')`. The API returns a report, not coerced configuration values. Filesystem I/O stays with the caller.
+`CheckOptions`, `EnvSource`, `Report`, `Issue` and `IssueCode` are exported types. CommonJS is supported with `require('env-precheck')`. The API returns a report, not coerced configuration values. Non-string values supplied by untyped callers are reported as `invalid_value`, without exposing the value. Filesystem I/O stays with the caller.
 
 ## Deliberate boundaries
 
@@ -237,6 +239,6 @@ node bin/env-precheck.mjs --contract examples/app.env.example --env examples/app
 
 CI tests Node.js 20, 22 and 24 on Linux, plus Node.js 22 on Windows. Package tests install the actual tarball into a temporary consumer and verify the CLI, both module formats and TypeScript declarations.
 
-[Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [Changelog](CHANGELOG.md)
+[Contributing](https://github.com/farhad-arjmand/env-precheck/blob/main/CONTRIBUTING.md) · [Security](https://github.com/farhad-arjmand/env-precheck/blob/main/SECURITY.md) · [Changelog](https://github.com/farhad-arjmand/env-precheck/blob/main/CHANGELOG.md)
 
 MIT © Farhad Arjmand
