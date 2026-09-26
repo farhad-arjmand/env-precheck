@@ -1,0 +1,22 @@
+{
+  "name": "env-precheck",
+  "version": "1.0.0",
+  "description": "Catch broken environment configuration before deployment. Annotated .env.example contracts, layered files, and value-free CI reports.",
+  "type": "module",
+  "main": "./dist/cjs/index.js",
+  "types": "./dist/esm/index.d.ts",
+  "exports": {".": {"import": {"types":"./dist/esm/index.d.ts","default":"./dist/esm/index.js"},"require":{"types":"./dist/cjs/index.d.ts","default":"./dist/cjs/index.js"}}},
+  "bin": {"env-precheck":"./bin/env-precheck.mjs"},
+  "files": ["dist", "bin", "README.md", "LICENSE"],
+  "sideEffects": false,
+  "engines": {"node": ">=20"},
+  "scripts": {"build":"node scripts/build.mjs","test":"npm run build && node --test test/*.test.mjs","test:types":"tsc --noEmit --strict --module NodeNext --moduleResolution NodeNext --target ES2022 test/types.mts test/types.cts","check":"npm test && npm run test:types","test:package":"node scripts/smoke-pack.mjs","prepack":"npm run build","demo":"npm run build && node bin/env-precheck.mjs --contract examples/app.env.example --env examples/app.env.valid"},
+  "keywords": ["dotenv","env","environment-variables","validation","ci","deployment","cli","typescript"],
+  "license": "MIT",
+  "author": "Farhad Arjmand",
+  "repository": {"type":"git","url":"git+https://github.com/farhad-arjmand/env-precheck.git"},
+  "bugs": {"url":"https://github.com/farhad-arjmand/env-precheck/issues"},
+  "homepage": "https://github.com/farhad-arjmand/env-precheck#readme",
+  "publishConfig": {"access":"public","registry":"https://registry.npmjs.org/"},
+  "devDependencies": {"typescript":"7.0.2"}
+}
